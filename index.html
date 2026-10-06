@@ -50,6 +50,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .teamRow .tcount.bump{animation:bump .45s ease-out}
 @keyframes bump{30%{transform:scale(1.5)}}
 .teamRow .tmembers{grid-column:1/-1;font-size:clamp(12px,1.05vw,16px);font-weight:700;line-height:1.45;padding:4px 0 2px 22px;color:var(--ink-soft)}
+#teamRows.compact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px}
+#teamRows.compact .teamRow{grid-template-columns:minmax(0,1fr) auto;padding:4px 8px 4px 6px;border-left-width:6px;border-radius:10px}
+#teamRows.compact .dot{display:none}
+#teamRows.compact .tname{font-size:clamp(13px,1.1vw,17px)}
+#teamRows.compact .tcount{font-size:clamp(18px,1.6vw,26px)}
+#teamRows.compact .tmembers{padding-left:2px;font-size:12px}
 #freeLine{font-family:var(--f-display);font-size:clamp(16px,1.6vw,24px);color:var(--grape)}
 #remainLine{font-size:clamp(12px,1vw,15px);color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
 #teamPanel .hint{margin:0;font-size:12px;color:var(--muted)}
@@ -116,12 +122,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 #previewList li span:first-child{color:var(--muted);min-width:2ch}
 #previewList li.over{color:var(--bad)}
 .seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button{width:62px;height:58px;border:0;border-radius:14px;background:var(--field);font-family:var(--f-display);font-size:30px;cursor:pointer}
+.seg button{width:54px;height:54px;border:0;border-radius:14px;background:var(--field);font-family:var(--f-display);font-size:30px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--grape);color:#fff;box-shadow:0 4px 0 #4a34a6}
 #mRows{display:flex;flex-direction:column;gap:8px}
 .mRow{display:grid;grid-template-columns:52px auto minmax(0,1fr);align-items:center;gap:10px}
 .mRow canvas{width:52px;height:52px;border-radius:14px;background:var(--l)}
 .mRow .mlabel{font-weight:900;color:var(--c);white-space:nowrap}
+#mRows.many{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+#mRows.many .mRow{grid-template-columns:40px minmax(0,1fr);gap:6px}
+#mRows.many .mRow canvas{width:40px;height:40px;border-radius:10px}
+#mRows.many .mlabel{display:none}
+#mRows.many .mRow input{height:40px;font-size:17px;padding:0 10px}
 .mRow input{width:100%;box-sizing:border-box;height:48px;border:0;border-radius:12px;background:var(--field);padding:0 14px;font-family:var(--f-body);font-weight:700;font-size:20px;color:var(--ink)}
 .timeGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .timeGrid button{height:70px;border:0;border-radius:16px;background:var(--field);font-family:var(--f-display);font-size:32px;cursor:pointer}
@@ -158,6 +169,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .team ol:not(.two) li:nth-child(even){background:transparent}
 .team li .no{color:var(--c);font-weight:900;font-size:16px;min-width:2ch;-webkit-text-stroke:.5px rgba(35,27,56,.3)}
 .team li .nm{font-family:var(--f-display);font-size:clamp(19px,1.7vw,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#resGrid.dense{gap:10px}
+#resGrid.dense .team header{padding:7px 10px;gap:6px}
+#resGrid.dense .team header .tno{font-size:12px}
+#resGrid.dense .team header .tn{font-size:clamp(17px,1.5vw,23px)}
+#resGrid.dense .team header .tc{font-size:clamp(15px,1.3vw,20px);padding:0 8px}
+#resGrid.dense .team ol{padding:5px 6px 8px;grid-template-columns:1fr}
+#resGrid.dense .team li{padding:1px 6px;gap:6px}
+#resGrid.dense .team li .no{font-size:13px}
+#resGrid.dense .team li .nm{font-size:clamp(15px,1.25vw,20px)}
 .resBtns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:18px}
 .resBtns .btn{font-size:clamp(16px,1.4vw,21px);font-weight:900;padding:16px 22px;border-radius:16px}
 #copyFallback{width:100%;height:120px;margin-top:10px;font-family:var(--f-body)}
@@ -278,7 +298,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
    밸런스 수치는 아래 CFG 한 곳에서 바꿀 수 있습니다.
    ===================================================================== */
 const CFG={
-  minP:1,maxP:60,minM:2,maxM:6,monsterChoices:[2,3,4,5,6],durations:[30,60,90,120],defaultDuration:60,
+  minP:1,maxP:60,minM:2,maxM:12,monsterChoices:[2,3,4,5,6,7,8,9,10,11,12],durations:[30,60,90,120],defaultDuration:60,
   maxName:16,maxMonsterName:10,
   arenaHalf:57,
   huntEnd:{30:10,60:25,90:35,120:45},finalSeconds:10,
@@ -323,8 +343,9 @@ const Josa=(()=>{const dg={'0':1,'1':1,'2':0,'3':1,'4':0,'5':0,'6':1,'7':1,'8':1
 const PAL=[
   {c:'#eb4b4b',l:'#ffb3ae',e:'🔴'},{c:'#4182eb',l:'#b0d2ff',e:'🔵'},{c:'#3fb257',l:'#b6ecb1',e:'🟢'},
   {c:'#f2be22',l:'#fff0a8',e:'🟡'},{c:'#965adc',l:'#dcc2fb',e:'🟣'},{c:'#f7871f',l:'#ffd3a1',e:'🟠'},
-  {c:'#f06eb4',l:'#ffc9e3',e:'🩷'},{c:'#28b9af',l:'#ade9e3',e:'🩵'}];
-const SHAPE_OF=['Chubby','Tall','Wide','Horned','Slime','Robot','Chubby','Horned'];
+  {c:'#f06eb4',l:'#ffc9e3',e:'🩷'},{c:'#28b9af',l:'#ade9e3',e:'🩵'},{c:'#86c22e',l:'#d6f0a6',e:'💚'},{c:'#a5683a',l:'#e8c7a6',e:'🟤'},
+  {c:'#3446a8',l:'#b4bdf0',e:'💙'},{c:'#5e5a72',l:'#cfcbdc',e:'⚫'}];
+const SHAPE_OF=['Chubby','Tall','Wide','Horned','Slime','Robot','Chubby','Horned','Tall','Wide','Slime','Robot'];
 const SHAPES={ // 외형 차이는 순수 연출 (속도·크기 판정은 모두 동일)
   Chubby:{scale:1,  mouthY:6.6, top:12.7,eyeY:9.1, faceShift:1.0,hoppy:true, shadow:5.6,w:13,face:[0,-8.2,5,3.6]},
   Tall:  {scale:.92,mouthY:12.9,top:20.2,eyeY:15.1,faceShift:.75,hoppy:false,shadow:3.8,w:10,face:[0,-14.2,3.4,3.2]},
@@ -765,7 +786,7 @@ async function timeOver(){
 const STAGE={backZ0:76.4,backZ1:78.4,monZ:82.4,row0:90.5};
 async function presentResults(){
   const st=R,rid=st.rid;setPhase('RESULT_STAGE');
-  const M=st.M.length,width=clamp(M*34,70,166),zw=width/M;G.stageW=width;G.zones=[];
+  const M=st.M.length,width=M<=6?clamp(M*34,70,166):M*25,zw=width/M;G.stageW=width;G.zones=[];
   let maxRows=1;
   const plan=st.M.map(m=>{const members=m.belly.map(id=>st.get(id)).sort((a,b)=>a.index-b.index);
     const cols=Math.max(2,Math.min(Math.ceil(Math.sqrt(members.length*2)),Math.max(2,Math.floor((zw-2)/5.4))));
@@ -1301,7 +1322,7 @@ const HUD=(()=>{
     phase(ph){const p=PH[ph];if(p){el.phase.textContent=p[0];el.phase.style.background=p[1];}},
     time(sec,fin){const s=Math.max(0,Math.ceil(sec)),t=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
       if(t!==lastTime){lastTime=t;el.timer.textContent=t;el.remain.textContent='남은 시간 '+t;}el.timer.classList.toggle('final',!!fin);},
-    teams(sum){last=sum;if(!sum)return;el.rows.textContent='';
+    teams(sum){last=sum;if(!sum)return;el.rows.textContent='';el.rows.classList.toggle('compact',sum.teams.length>6);
       for(const t of sum.teams){const p=PAL[t.palette];const b=document.createElement('button');b.type='button';b.className='teamRow';b.style.setProperty('--c',p.c);b.style.setProperty('--l',p.l);
         b.setAttribute('aria-expanded',expanded.has(t.index)?'true':'false');
         const dot=document.createElement('span');dot.className='dot';const nm=document.createElement('span');nm.className='tname';nm.textContent=t.name;
@@ -1368,7 +1389,7 @@ function drawThumb(cvs,i,mood){const c=cvs.getContext('2d');cvs.width=128;cvs.he
   c.clearRect(0,0,128,128);c.translate(64,121);const k=Math.min(112/(sp.top*sp.scale+.6),118/(sp.w*sp.scale));c.scale(k*sp.scale,k*sp.scale);c.lineJoin='round';c.lineCap='round';
   try{DRAW[shape](fake,PAL[i].c,PAL[i].l);}finally{ctx=prev;}}
 const Setup=(()=>{
-  const S={count:20,mCount:4,mNames:['','','','','',''],duration:CFG.defaultDuration};
+  const S={count:20,mCount:4,mNames:Array(CFG.maxM).fill(''),duration:CFG.defaultDuration};
   const el={root:$('setup'),count:$('countInput'),roster:$('roster'),prevHead:$('previewHead'),prevList:$('previewList'),mRow:$('mCountRow'),mRows:$('mRows'),
     time:$('timeGrid'),sumText:$('sumText'),sumTeams:$('sumTeams'),status:$('status'),start:$('startBtn'),hint:$('rosterHint')};
   const mBtns=new Map(),tBtns=new Map(),rows=[];
@@ -1396,7 +1417,7 @@ const Setup=(()=>{
     const sample=names.length===SAMPLE.length&&names.every((n,i)=>n===SAMPLE[i]);
     el.hint.innerHTML=sample?'지금은 <b>예시 명단</b>이에요. 우리 반 명단으로 바꿔 넣으세요.':'한 줄에 한 명씩 적어요. 엑셀이나 한글 명단을 그대로 붙여넣어도 됩니다.';
     for(const [n,b] of mBtns)b.setAttribute('aria-pressed',n===S.mCount?'true':'false');
-    rows.forEach((r,i)=>r.hidden=i>=S.mCount);
+    rows.forEach((r,i)=>r.hidden=i>=S.mCount);el.mRows.classList.toggle('many',S.mCount>6);
     for(const [d,b] of tBtns)b.setAttribute('aria-pressed',d===S.duration?'true':'false');
     el.sumText.innerHTML=`참가자 <b>${names.length}</b>명<br>괴물 <b>${S.mCount}</b>마리<br>게임 시간 <b>${S.duration}</b>초`;
     el.sumTeams.textContent=teamText(names.length,S.mCount);
@@ -1409,7 +1430,7 @@ const Setup=(()=>{
     const lineup=$('lineup');for(let i=0;i<6;i++){const c=document.createElement('canvas');lineup.append(c);drawThumb(c,i,['Happy','Smirk','Yum','Evil','Happy','Smirk'][i]);}
     for(const n of CFG.monsterChoices){if(n>CFG.maxM)continue;const b=document.createElement('button');b.type='button';b.textContent=n;b.setAttribute('aria-label','괴물 '+n+'마리');
       b.addEventListener('click',()=>{AU.sfx('click');S.mCount=n;refresh();});mBtns.set(n,b);el.mRow.append(b);}
-    const ex=['냠냠이','꿀꺽이','뚱뚱이','외눈박이','말랑이','철컥이'];
+    const ex=['냠냠이','꿀꺽이','뚱뚱이','외눈박이','말랑이','철컥이','우걱이','날름이','쩝쩝이','후루룩','오물이','덥석이'];
     for(let i=0;i<CFG.maxM;i++){const r=document.createElement('div');r.className='mRow';r.style.setProperty('--c',shade(PAL[i].c,-.15));r.style.setProperty('--l',PAL[i].l);
       const c=document.createElement('canvas');drawThumb(c,i,'Neutral');const lab=document.createElement('label');lab.className='mlabel';lab.textContent='괴물 '+(i+1);lab.htmlFor='mName'+i;
       const inp=document.createElement('input');inp.id='mName'+i;inp.maxLength=CFG.maxMonsterName;inp.placeholder='예: '+ex[i];inp.value=S.mNames[i]||'';inp.autocomplete='off';
@@ -1436,7 +1457,7 @@ const Setup=(()=>{
       if(focus==='roster')setTimeout(()=>el.roster.focus(),50);
       if(focus==='monsters'){const c=$('cardMonsters');c.classList.add('flash');c.scrollIntoView({block:'center'});setTimeout(()=>c.classList.remove('flash'),2000);}},
     hide(){el.root.hidden=true;},
-    resetAll(){S.count=20;S.mCount=4;S.duration=CFG.defaultDuration;S.mNames=['','','','','',''];rows.forEach(r=>r.querySelector('input').value='');el.roster.value='';refresh();}};
+    resetAll(){S.count=20;S.mCount=4;S.duration=CFG.defaultDuration;S.mNames=Array(CFG.maxM).fill('');rows.forEach(r=>r.querySelector('input').value='');el.roster.value='';refresh();}};
 })();
 
 /* =====================================================================
@@ -1448,9 +1469,9 @@ const Result=(()=>{
   function text(sum){const lines=[`누가 나 먹었어? 모둠 결과 (참가자 ${sum.total}명, ${sum.teams.length}모둠)`];
     sum.teams.forEach((t,i)=>lines.push(`TEAM ${i+1} ${t.name} (${t.count}명): ${t.members.map(m=>m.name).join(', ')}`));return lines.join('\n');}
   function show(sum){last=sum;collapsed=false;el.root.hidden=false;el.sheet.hidden=false;el.toggle.hidden=false;el.toggle.textContent='무대 보기';el.msg.textContent='';el.fb.hidden=true;
-    const M=sum.teams.length,cols=M<=4?M:Math.ceil(M/2);el.grid.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;el.grid.textContent='';
+    const M=sum.teams.length,cols=M<=4?M:Math.ceil(M/2);el.grid.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;el.grid.classList.toggle('dense',M>6);el.grid.textContent='';
     sum.teams.forEach((t,i)=>{const p=PAL[t.palette];const card=document.createElement('article');card.className='team';card.style.setProperty('--c',shade(p.c,-.08));
-      const h=document.createElement('header');const no=document.createElement('span');no.className='tno';no.textContent=`${p.e} TEAM ${i+1}`;
+      const h=document.createElement('header');const no=document.createElement('span');no.className='tno';no.textContent=M>6?`${p.e} ${i+1}`:`${p.e} TEAM ${i+1}`;
       const tn=document.createElement('span');tn.className='tn';tn.textContent=t.name;const tc=document.createElement('span');tc.className='tc';tc.textContent=t.count+'명';h.append(no,tn,tc);
       const ol=document.createElement('ol');if(t.members.length>8&&cols<=3)ol.className='two';
       for(const m of t.members){const li=document.createElement('li');const a=document.createElement('span');a.className='no';a.textContent=String(m.order).padStart(2,'0');
